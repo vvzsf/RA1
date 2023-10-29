@@ -35,8 +35,8 @@ async def start_handler(c, m):
 @Bot.on_message(filters.command("start"))
 async def start_cmd(client, message):
     await massage.reply_photo(
-        photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg,"
-        captions= " Hai ")
+        photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg",
+        captions= "Hai")
 
 @Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
 async def broadcast(c, m):
