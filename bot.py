@@ -6,7 +6,11 @@ from os import environ as env
 import asyncio, datetime, time
 
 
-ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>"
+ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>
+    button = [[        
+        InlineKeyboardButton('◤ ᴜᴘᴅᴀᴛᴇꜱ ◢ ', url='https://t.me/PanindiaFilmZ'),
+        InlineKeyboardButton(' ◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
+    ]]"
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
 
 API_ID = int(env.get('API_ID'))
@@ -27,8 +31,8 @@ async def start_handler(c, m):
     user_id = m.from_user.id
     if not await Data.find_one({'id': user_id}): await Data.insert_one({'id': user_id})
     button = [[        
-        InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇꜱ メ', url='https://t.me/PanindiaFilmZ'),
-        InlineKeyboardButton('ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ メ', url='https://t.me/BoTzUpdates0')
+        InlineKeyboardButton('◤ ᴜᴘᴅᴀᴛᴇꜱ ◢', url='https://t.me/PanindiaFilmZ'),
+        InlineKeyboardButton('◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
     ]]
     return await m.reply_text(text=START_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
           
