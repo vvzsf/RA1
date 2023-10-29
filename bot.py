@@ -8,6 +8,7 @@ import asyncio, datetime, time
 
 ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>"
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
+NAA_TEXT = "Hai"
 
 API_ID = int(env.get('API_ID'))
 API_HASH = env.get('API_HASH')
@@ -32,8 +33,8 @@ async def start_handler(c, m):
     ]]
     return await m.reply_text(text=START_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
 
-@Bot.on_message(filters.command("start") & filters.private)
-async def start_handler(c, m):
+@Bot.on_message(filters.command("naa") & filters.private)
+async def naa_handler(c, m):
     await massage.reply_photo(
         photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg",
         captions= "Hai")
