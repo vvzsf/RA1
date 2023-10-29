@@ -31,7 +31,7 @@ async def start_handler(c, m):
         InlineKeyboardButton('◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
     ]]
     return await m.reply_text(text=START_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
-          
+    return await m.reply_text(text=ACCEPTED_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))      
 
 @Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
 async def broadcast(c, m):
