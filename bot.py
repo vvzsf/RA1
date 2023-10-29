@@ -31,7 +31,9 @@ async def start_handler(c, m):
         InlineKeyboardButton('◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
     ]]
     return await m.reply_text(text=START_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
-    return await m.reply_text(text=ACCEPTED_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))      
+
+    await massage.reply_photo(
+        photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg")
 
 @Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
 async def broadcast(c, m):
