@@ -32,7 +32,12 @@ async def start_handler(c, m):
     ]]
     return await m.reply_text(text=START_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
 
-    await massage.reply_photo(
+@Bot.on_message(filters.command("start") & filters.private)                    
+async def start_handler(c, m):
+    user_id = m.from_user.id
+    if not await Data.find_one({'id': user_id}): await Data.insert_one({'id': user_id})
+
+       await massage.reply_photo(
         photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg")
 
 @Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
