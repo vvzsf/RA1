@@ -10,7 +10,9 @@ ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>"
     button = [[        
         InlineKeyboardButton('◤ ᴜᴘᴅᴀᴛᴇꜱ ◢ ', url='https://t.me/PanindiaFilmZ'),
         InlineKeyboardButton(' ◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
-    ]]"
+    ]]
+return await m.reply_text(text=ACCEPTED_TEXT.format(m.from_user.mention), disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(button))
+
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
 
 API_ID = int(env.get('API_ID'))
