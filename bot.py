@@ -15,6 +15,7 @@ API_HASH = env.get('API_HASH')
 BOT_TOKEN = env.get('BOT_TOKEN')
 DB_URL = env.get('DB_URL')
 ADMINS = int(env.get('ADMINS'))
+PICS = (env.get('PICS', 'https://graph.org/file/79c708cc8bcf16e88a2e9.jpg')).split()
 
 Dbclient = AsyncIOMotorClient(DB_URL)
 Cluster = Dbclient['Cluster0']
