@@ -6,7 +6,11 @@ from os import environ as env
 import asyncio, datetime, time
 
 
-ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>"
+ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>
+button = [[        
+        InlineKeyboardButton('◤ ᴜᴘᴅᴀᴛᴇꜱ ◢', url='https://t.me/PanindiaFilmZ'),
+        InlineKeyboardButton('◤ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ◢', url='https://t.me/BoTzUpdates0')
+    ]]"
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
 NAA_TEXT = "Hai"
 
