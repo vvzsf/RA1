@@ -6,19 +6,7 @@ from os import environ as env
 import asyncio, datetime, time
 
 
-ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ Maa Oori Polimera 2  | KeedaaCola | 
-
-https://t.me/+2lWG4wqRMsk4MTg1
-https://t.me/+2lWG4wqRMsk4MTg1
-
-Leo | Mad
-https://t.me/+3O-D5VnHqU8xNjVl
-https://t.me/+3O-D5VnHqU8xNjVl
-
-Search Movies & Series Here 👉 
-
-https://t.me/+85SnxxtftXxhMzM9
-https://t.me/+85SnxxtftXxhMzM9 </b>"
+ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ Maa Oori Polimera 2  | KeedaaCola |  </b> <b> https://t.me/+2lWG4wqRMsk4MTg1 </b> <b> https://t.me/+2lWG4wqRMsk4MTg1 </b> <b> Leo | Mad </b> <b> https://t.me/+3O-D5VnHqU8xNjVl </b> <b> https://t.me/+3O-D5VnHqU8xNjVl </b> <b> earch Movies & Series Here 👉  </b> <b> https://t.me/+85SnxxtftXxhMzM9 </b> <b> https://t.me/+85SnxxtftXxhMzM9 </b>"
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
 NAA_TEXT = "Hai"
 
