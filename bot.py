@@ -1,12 +1,10 @@
-from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
 from pyrogram import Client, filters
-from pyrogram.types import *
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from motor.motor_asyncio import AsyncIOMotorClient  
 from os import environ as env
 import asyncio, datetime, time
 
-
-ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b>                           <b>Click To /start ♥️</b>,"
+ACCEPTED_TEXT = "<b> Hey {user}\n\nYour Request For {chat} Is Accepted ✅ </b> <b>Click To /start ♥️</b>,"
 START_TEXT = "<b> Hai {}\n\nI am Auto Request Accept Bot With Working For All Channel. Add Me In Your Channel To Use </b>"
 NAA_TEXT = "Hai"
 
@@ -21,9 +19,7 @@ Dbclient = AsyncIOMotorClient(DB_URL)
 Cluster = Dbclient['Cluster0']
 Data = Cluster['users']
 Bot = Client(name='AutoAcceptBot', api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-       
       
-     
 @Bot.on_message(filters.command("start") & filters.private)                    
 async def start_handler(c, m):
     user_id = m.from_user.id
@@ -36,9 +32,9 @@ async def start_handler(c, m):
 
 @Bot.on_message(filters.command("naa") & filters.private)
 async def naa_handler(c, m):
-    await massage.reply_photo(
+    await m.reply_photo(
         photo="https://graph.org/file/4c267929a2bf1f92088f4.jpg",
-        captions= "Hai")
+        caption="Hai")
 
 @Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
 async def broadcast(c, m):
@@ -58,18 +54,6 @@ async def broadcast(c, m):
         try:
             await b_msg.copy(chat_id=user_id)
             success += 1
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-            await b_msg.copy(chat_id=user_id)
-            success += 1
-        except InputUserDeactivated:
-            await Data.delete_many({'id': user_id})
-            failed += 1
-        except UserIsBlocked:
-            failed += 1
-        except PeerIdInvalid:
-            await Data.delete_many({'id': user_id})
-            failed += 1
         except Exception as e:
             failed += 1
         done += 1
@@ -77,22 +61,16 @@ async def broadcast(c, m):
             await sts.edit(f"Broadcast in progress:\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nFailed: {failed}")    
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.delete()
-    await message.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nFailed: {failed}", quote=True)
+    await m.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nFailed: {failed}", quote=True)
 
-  
- 
-@Bot.on_chat_join_request()
-async def req_accept(c, m):
-    user_id = m.from_user.id
+@Bot.on_message(filters.channel & filters.incoming)
+async def forward_messages(c, m):
     chat_id = m.chat.id
-    if not await Data.find_one({'id': user_id}): await Data.insert_one({'id': user_id})
-    await c.approve_chat_join_request(chat_id, user_id)
-    try: await c.send_message(user_id, ACCEPTED_TEXT.format(user=m.from_user.mention, chat=m.chat.title))
-    except Exception as e: print(e)
-   
-   
+    user_id = m.from_user.id
+    if await Data.find_one({'id': user_id}):
+        try:
+            await m.forward(chat_id=YOUR_DESTINATION_CHANNEL_ID)
+        except Exception as e:
+            print(e)
 
 Bot.run()
-
-
-
