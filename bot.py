@@ -1,74 +1,24 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
-from pymongo import MongoClient
-import os
+from pyrogram import Client, filters
+from pyrogram.types import ChatMemberUpdated
+import asyncio
 
-# Read environment variables
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
-DB_URL = os.environ.get('DB_URL')
-OWNER_USER_ID = os.environ.get('OWNER_USER_ID')  # Add this line to get the owner's user ID
+app = Client("my_account")
 
-# Initialize MongoDB connection
-client = MongoClient(DB_URL)
-db = client['mydatabase']
-users_collection = db['users']
+# Handle members joining the channel or group
+async def on_join(client, message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    await client.add_chat_members(chat_id, user_id)
 
-# Function to handle /start command
-def start(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.from_user.id
+# Handler for new chat members
+@app.on_chat_member_updated(filters.chat_member_updated)
+async def chat_members_updated(client, message: ChatMemberUpdated):
+    if message.new_chat_members and message.new_chat_members[0].id == client.get_me().id:
+        await on_join(client, message)
 
-    # Save user info to the database
-    if not users_collection.find_one({'id': user_id}):
-        users_collection.insert_one({'id': user_id})
-
-    # Send a welcome image and message
-    welcome_text = "Welcome to the community! We're glad to have you on board."
-    welcome_image_url = "https://graph.org/file/79c708cc8bcf16e88a2e9.jpg"  # Replace with your image URL
-
-    update.message.reply_photo(
-        photo=welcome_image_url,
-        caption=welcome_text
-    )
-
-    # Notify the user about the request acceptance if the owner
-    if user_id == OWNER_USER_ID:
-        update.message.reply_text("Your join request has been automatically accepted!")
-
-# Function to handle /broadcast command
-def broadcast(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.from_user.id
-
-    # Check if the user is the owner
-    if user_id == OWNER_USER_ID:
-        # Implement your broadcast logic here
-        context.bot.send_message(user_id, text="Broadcasting message to all users!")
-    else:
-        update.message.reply_text("You are not authorized to use this command.")
-
-# Function to handle /users_status command
-def users_status(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.from_user.id
-
-    # Check if the user is the owner
-    if user_id == OWNER_USER_ID:
-        # Retrieve and send users status
-        total_users = users_collection.count_documents({})
-        context.bot.send_message(user_id, text=f"Total Users: {total_users}")
-    else:
-        update.message.reply_text("You are not authorized to use this command.")
-
-def main():
-    updater = Updater(BOT_TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    # Register command handlers
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("broadcast", broadcast))
-    dp.add_handler(CommandHandler("users_status", users_status))
-
-    updater.start_polling()
-    updater.idle()
+async def main():
+    await app.start()
+    await app.idle()
 
 if __name__ == '__main__':
-    main()
-    
+    asyncio.get_event_loop().run_until_complete(main())
