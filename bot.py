@@ -6,6 +6,7 @@ import os
 # Read environment variables
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 DB_URL = os.environ.get('DB_URL')
+OWNER_USER_ID = os.environ.get('OWNER_USER_ID')  # Add this line to get the owner's user ID
 
 # Initialize MongoDB connection
 client = MongoClient(DB_URL)
@@ -29,19 +30,32 @@ def start(update: Update, context: CallbackContext) -> None:
         caption=welcome_text
     )
 
-    # Notify the user about the request acceptance
-    update.message.reply_text("Your join request has been accepted!")
+    # Notify the user about the request acceptance if the owner
+    if user_id == OWNER_USER_ID:
+        update.message.reply_text("Your join request has been automatically accepted!")
 
 # Function to handle /broadcast command
 def broadcast(update: Update, context: CallbackContext) -> None:
-    # Implement your broadcast logic here
-    context.bot.send_message(update.message.from_user.id, text="Broadcasting message to all users!")
+    user_id = update.message.from_user.id
+
+    # Check if the user is the owner
+    if user_id == OWNER_USER_ID:
+        # Implement your broadcast logic here
+        context.bot.send_message(user_id, text="Broadcasting message to all users!")
+    else:
+        update.message.reply_text("You are not authorized to use this command.")
 
 # Function to handle /users_status command
 def users_status(update: Update, context: CallbackContext) -> None:
-    # Retrieve and send users status
-    total_users = users_collection.count_documents({})
-    context.bot.send_message(update.message.from_user.id, text=f"Total Users: {total_users}")
+    user_id = update.message.from_user.id
+
+    # Check if the user is the owner
+    if user_id == OWNER_USER_ID:
+        # Retrieve and send users status
+        total_users = users_collection.count_documents({})
+        context.bot.send_message(user_id, text=f"Total Users: {total_users}")
+    else:
+        update.message.reply_text("You are not authorized to use this command.")
 
 def main():
     updater = Updater(BOT_TOKEN, use_context=True)
@@ -57,3 +71,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
