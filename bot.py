@@ -1,70 +1,62 @@
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from motor.motor_asyncio import AsyncIOMotorClient
-from os import environ as env
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from pymongo import MongoClient
+import os
 
 # Read environment variables
-API_ID = int(env.get('API_ID'))
-API_HASH = env.get('API_HASH')
-BOT_TOKEN = env.get('BOT_TOKEN')
-DB_URL = env.get('DB_URL')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+DB_URL = os.environ.get('DB_URL')
 
 # Initialize MongoDB connection
-Dbclient = AsyncIOMotorClient(DB_URL)
-Cluster = Dbclient['Cluster0']
-Data = Cluster['users']
+client = MongoClient(DB_URL)
+db = client['mydatabase']
+users_collection = db['users']
 
-# Initialize Pyrogram Client
-Bot = Client(
-    'AutoRequestBot',
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
-)
-
-
-@Bot.on_chat_join_request()
-async def request_handler(_, request):
-    user_id = request.from_user.id
-    chat_id = request.chat.id
-
-    # Automatically approve the join request
-    await Bot.approve_chat_join_request(chat_id, user_id)
+# Function to handle /start command
+def start(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
 
     # Save user info to the database
-    if not await Data.find_one({'id': user_id}):
-        await Data.insert_one({'id': user_id})
+    if not users_collection.find_one({'id': user_id}):
+        users_collection.insert_one({'id': user_id})
 
     # Send a welcome message with buttons
-    welcome_text = f"Welcome {request.from_user.mention}!\n\nClick the buttons below:"
+    welcome_text = f"Welcome {update.message.from_user.mention_html()}!\n\nClick the buttons below:"
     keyboard = [
-        [
-            InlineKeyboardButton('Broadcast', callback_data='broadcast'),
-            InlineKeyboardButton('Users Info', callback_data='users_info')
-        ]
+        [InlineKeyboardButton('Broadcast', callback_data='broadcast'),
+         InlineKeyboardButton('Users Info', callback_data='users_info')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await request.reply_text(
+    update.message.reply_html(
         text=welcome_text,
         reply_markup=reply_markup
     )
 
+# Function to handle /broadcast command
+def broadcast(update: Update, context: CallbackContext) -> None:
+    # Implement your broadcast logic here
+    context.bot.send_message(update.message.from_user.id, text="Broadcast button clicked!")
 
-@Bot.on_callback_query()
-async def callback_handler(_, callback):
-    user_id = callback.from_user.id
+# Function to handle /users_info command
+def users_info(update: Update, context: CallbackContext) -> None:
+    # Retrieve and send users info
+    total_users = users_collection.count_documents({})
+    context.bot.send_message(update.message.from_user.id, text=f"Total Users: {total_users}")
 
-    # Handle button callbacks
-    if callback.data == 'broadcast':
-        # Implement your broadcast logic here
-        await callback.answer("Broadcast button clicked!")
+def main():
+    updater = Updater(BOT_TOKEN, use_context=True)
+    dp = updater.dispatcher
 
-    elif callback.data == 'users_info':
-        # Retrieve and send users info
-        total_users = await Data.count_documents({})
-        await callback.answer(f"Total Users: {total_users}")
+    # Register command handlers
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("broadcast", broadcast))
+    dp.add_handler(CommandHandler("users_info", users_info))
 
-# Run the bot
-Bot.run()
-      
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
+    
