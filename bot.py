@@ -22,7 +22,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
     # Send a welcome image and message
     welcome_text = "Welcome to the community! We're glad to have you on board."
-    welcome_image_url = "https://example.com/welcome_image.jpg"  # Replace with your image URL
+    welcome_image_url = "https://graph.org/file/79c708cc8bcf16e88a2e9.jpg"  # Replace with your image URL
 
     update.message.reply_photo(
         photo=welcome_image_url,
